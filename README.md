@@ -82,10 +82,4 @@ Lưu ý: UI trên trang chủ sử dụng fetch + FormData để gửi file, nê
 - Cài thêm `nodemon` global (nếu muốn): `npm i -g nodemon`.
 - Xem log server (stdout) để biết liệu app đang dùng `mongodb` hay `in-memory`.
 
-**Tôi có thể giúp tiếp**
-- Thêm giới hạn kích thước file và kiểm tra MIME type.
-- Hoặc chuyển lưu trữ ảnh sang S3/Cloudinary (cần credentials).
-- Thêm trang chi tiết sản phẩm hoặc phân trang cho danh sách.
-
-Nếu bạn muốn tôi cập nhật README để ghi rõ cách migrate dữ liệu, cách reset uploads hoặc ví dụ cụ thể hơn, cho biết yêu cầu cụ thể và tôi sẽ bổ sung.
 
