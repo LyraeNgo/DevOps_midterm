@@ -9,7 +9,18 @@
   </head>
   <body>
     <div class="container my-4">
-      <header class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="h3">Products</h1>
-        <div class="text-end small text-muted">Host: <%= hostname %> · Source: <%= source %></div>
-      </header>
+      <header class="bg-white shadow-sm rounded p-3 mb-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+    <!-- Left: Title -->
+    <div>
+      <h1 class="h3 mb-0 fw-bold text-primary">Product Catalog</h1>
+      <div class="small text-muted">
+        Host: <%= hostname %> · Source: <%= source %>
+      </div>
+    </div>
+    <div class=" justify-content-end">
+      <button id="btn-add" class="btn btn-primary btn-sm">Add Product</button>
+    </div>
+  </div>
+</header>
