@@ -83,3 +83,37 @@ Lưu ý: UI trên trang chủ sử dụng fetch + FormData để gửi file, nê
 - Xem log server (stdout) để biết liệu app đang dùng `mongodb` hay `in-memory`.
 
 
+```
+DevOps_midterm 
+├─ controllers
+│  └─ productController.js
+├─ main.js
+├─ models
+│  └─ product.js
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ css
+│  │  └─ styles.css
+│  ├─ images
+│  │  └─ placeholder-80.png
+│  └─ js
+│     └─ ui.js
+├─ README.md
+├─ routes
+│  ├─ productRoutes.js
+│  └─ uiRoutes.js
+├─ scripts
+│  ├─ index.js
+│  └─ setup.sh
+├─ services
+│  └─ dataSource.js
+├─ validators
+│  └─ productValidator.js
+└─ views
+   ├─ index.ejs
+   └─ partials
+      ├─ footer.ejs
+      └─ head.ejs
+
+```
