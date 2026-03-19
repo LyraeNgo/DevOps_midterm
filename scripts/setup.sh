@@ -1,140 +1,69 @@
 #!/bin/bash
+set -e
 
-# Send deprecation Warning
-node_deprecation_warning() {
-    log "
-===============================================================================
-                            DEPRECATION WARNING                            
-===============================================================================
-Node.js 18.x is no longer actively supported!
-You will not receive security or critical stability updates for this version.
+echo "============================="
+echo "Starting environment setup..."
+echo "============================="
 
-You should migrate to a supported version of Node.js as soon as possible.
+# Check OS (Ubuntu/Debian-based)
+if ! command -v apt &> /dev/null
+then
+  echo "[ERROR] This script supports Ubuntu/Debian only."
+  exit 1
+fi
 
-Please see https://nodesource.com/products/distributions for details about which
-version may be appropriate for you.
+# Check sudo/root
+if [ "$EUID" -ne 0 ]; then
+  echo "[ERROR] Please run with sudo privileges"
+  exit 1
+fi
 
-The NodeSource Node.js distributions site contains
-information both about supported versions of Node.js and N|Solid supported Linux
-distributions. To learn more about usage, see:
-https://nodesource.com/products/distributions
+# Update system
+echo "[1/6] Updating system..."
+apt update -y
 
-===============================================================================
+# Install basic tools
+echo "[2/6] Installing basic tools..."
+apt install -y git curl build-essential
 
-Continuing in 10 seconds ...
-" "error"
-    sleep 10
-}
+# Install Node.js (LTS 20.x)
+echo "[3/6] Checking Node.js..."
+if ! command -v node &> /dev/null
+then
+  echo "Installing Node.js (LTS 20.x)..."
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  apt install -y nodejs
+else
+  echo "Node.js already installed"
+fi
 
-# Logger Function
-log() {
-  local message="$1"
-  local type="$2"
-  local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-  local color
-  local endcolor="\033[0m"
+# Install Docker
+echo "[4/6] Checking Docker..."
+if ! command -v docker &> /dev/null
+then
+  echo "Installing Docker..."
+  apt install -y docker.io
+  systemctl start docker
+  systemctl enable docker
+  usermod -aG docker $SUDO_USER
+else
+  echo "Docker already installed"
+fi
 
-  case "$type" in
-    "info") color="\033[38;5;79m" ;;
-    "success") color="\033[1;32m" ;;
-    "error") color="\033[1;31m" ;;
-    *) color="\033[1;34m" ;;
-  esac
+# Create necessary directories
+echo "[5/6] Creating project directories..."
+mkdir -p ../uploads
 
-  echo -e "${color}${timestamp} - ${message}${endcolor}"
-}
+# Setup environment file
+echo "Initializing .env file..."
+if [ ! -f .env ]; then
+  touch .env
+fi
 
-# Error handler function  
-handle_error() {
-  local exit_code=$1
-  local error_message="$2"
-  log "Error: $error_message (Exit Code: $exit_code)" "error"
-  exit $exit_code
-}
+# Install dependencies
+echo "[6/6] Installing project dependencies..."
+npm install
 
-# Function to check for command availability
-command_exists() {
-  command -v "$1" &> /dev/null
-}
-
-check_os() {
-    if ! [ -f "/etc/debian_version" ]; then
-        echo "Error: This script is only supported on Debian-based systems."
-        exit 1
-    fi
-}
-
-# Function to Install the script pre-requisites
-install_pre_reqs() {
-    log "Installing pre-requisites" "info"
-
-    # Run 'apt update'
-    if ! apt update -y; then
-        handle_error "$?" "Failed to run 'apt update'"
-    fi
-
-    # Run 'apt install'
-    if ! apt install -y apt-transport-https ca-certificates curl gnupg; then
-        handle_error "$?" "Failed to install packages"
-    fi
-
-    if ! mkdir -p /usr/share/keyrings; then
-      handle_error "$?" "Makes sure the path /usr/share/keyrings exist or run ' mkdir -p /usr/share/keyrings' with sudo"
-    fi
-
-    rm -f /usr/share/keyrings/nodesource.gpg || true
-    rm -f /etc/apt/sources.list.d/nodesource.list || true
-
-    # Run 'curl' and 'gpg' to download and import the NodeSource signing key
-    if ! curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg; then
-      handle_error "$?" "Failed to download and import the NodeSource signing key"
-    fi
-
-    # Explicitly set the permissions to ensure the file is readable by all
-    if ! chmod 644 /usr/share/keyrings/nodesource.gpg; then
-        handle_error "$?" "Failed to set correct permissions on /usr/share/keyrings/nodesource.gpg"
-    fi
-}
-
-# Function to configure the Repo
-configure_repo() {
-    local node_version=$1
-
-    arch=$(dpkg --print-architecture)
-    if [ "$arch" != "amd64" ] && [ "$arch" != "arm64" ] && [ "$arch" != "armhf" ]; then
-      handle_error "1" "Unsupported architecture: $arch. Only amd64, arm64, and armhf are supported."
-    fi
-
-    echo "deb [arch=$arch signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$node_version nodistro main" | tee /etc/apt/sources.list.d/nodesource.list > /dev/null
-
-    # N|solid Config
-    echo "Package: nsolid" | tee /etc/apt/preferences.d/nsolid > /dev/null
-    echo "Pin: origin deb.nodesource.com" | tee -a /etc/apt/preferences.d/nsolid > /dev/null
-    echo "Pin-Priority: 600" | tee -a /etc/apt/preferences.d/nsolid > /dev/null
-
-    # Nodejs Config
-    echo "Package: nodejs" | tee /etc/apt/preferences.d/nodejs > /dev/null
-    echo "Pin: origin deb.nodesource.com" | tee -a /etc/apt/preferences.d/nodejs > /dev/null
-    echo "Pin-Priority: 600" | tee -a /etc/apt/preferences.d/nodejs > /dev/null
-
-    # Run 'apt update'
-    if ! apt update -y; then
-        handle_error "$?" "Failed to run 'apt update'"
-    else
-        log "Repository configured successfully."
-        log "To install Node.js, run: apt install nodejs -y" "info"
-        log "You can use N|solid Runtime as a node.js alternative" "info"
-        log "To install N|solid Runtime, run: apt install nsolid -y \n" "success"
-    fi
-}
-
-# Define Node.js version
-NODE_VERSION="18.x"
-
-# Check OS
-check_os
-
-# Main execution
-node_deprecation_warning
-install_pre_reqs || handle_error $? "Failed installing pre-requisites"
-configure_repo "$NODE_VERSION" || handle_error $? "Failed configuring repository"
+echo "============================="
+echo "Setup completed successfully!"
+echo "============================="
