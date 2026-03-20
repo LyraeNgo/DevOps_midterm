@@ -81,39 +81,7 @@ Lưu ý: UI trên trang chủ sử dụng fetch + FormData để gửi file, nê
 **Một số lệnh tiện ích**
 - Cài thêm `nodemon` global (nếu muốn): `npm i -g nodemon`.
 - Xem log server (stdout) để biết liệu app đang dùng `mongodb` hay `in-memory`.
-
-
-```
-DevOps_midterm 
-├─ controllers
-│  └─ productController.js
-├─ main.js
-├─ models
-│  └─ product.js
-├─ package-lock.json
-├─ package.json
-├─ public
-│  ├─ css
-│  │  └─ styles.css
-│  ├─ images
-│  │  └─ placeholder-80.png
-│  └─ js
-│     └─ ui.js
-├─ README.md
-├─ routes
-│  ├─ productRoutes.js
-│  └─ uiRoutes.js
-├─ scripts
-│  ├─ index.js
-│  └─ setup.sh
-├─ services
-│  └─ dataSource.js
-├─ validators
-│  └─ productValidator.js
-└─ views
-   ├─ index.ejs
-   └─ partials
-      ├─ footer.ejs
-      └─ head.ejs
-
-```
+**Link liên quan của dự án**
+- tên miền: devoops.shop
+- repository: https://github.com/LyraeNgo/DevOps_midterm.git
+- Docker Hub: 
