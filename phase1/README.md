@@ -81,5 +81,7 @@ Lưu ý: UI trên trang chủ sử dụng fetch + FormData để gửi file, nê
 **Một số lệnh tiện ích**
 - Cài thêm `nodemon` global (nếu muốn): `npm i -g nodemon`.
 - Xem log server (stdout) để biết liệu app đang dùng `mongodb` hay `in-memory`.
-
-
+**Link liên quan của dự án**
+- tên miền: devoops.shop
+- repository: https://github.com/LyraeNgo/DevOps_midterm.git
+- Docker Hub: 
