@@ -57,7 +57,7 @@ mkdir -p ../uploads
 # Setup environment file
 echo "Initializing .env file..."
 if [ ! -f .env ]; then
-  touch .env
+  touch ../env
 fi
 
 # Install dependencies
